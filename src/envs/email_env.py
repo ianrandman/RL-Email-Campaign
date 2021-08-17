@@ -20,11 +20,12 @@ class EmailEnv(gym.Env):
     metadata = {'render.modes': ['human']}
 
     def __init__(self, verbose=False):
-        self.action_space = gym.spaces.Discrete(
+        self.action_space = gym.spaces.MultiDiscrete((
+            2,  # greeting
             2)  # salutation
+        )
 
-
-        self.observation_space = gym.spaces.Discrete(2)  # TODO demographic, etc?
+        self.observation_space = gym.spaces.Discrete(1)  # TODO demographic, etc?
         self.verbose = verbose
 
         self.email = None
@@ -34,15 +35,9 @@ class EmailEnv(gym.Env):
         if self.verbose:
             print('step')
 
-        self.email = greetings[action]
-        # with open('data/email.json', 'w') as f:
-        #     json.dump({'email': email}, f)
-        # if action == 0:
-        #     reward = 100
-        # else:
-        #     reward = -100
+        self.email = greetings[action[0]] + salutations[action[-1]]
 
-        response_reward = 0#random.choice([0, 1])  # whether there was a response TODO make not random
+        response_reward = random.choice([0, 1])  # whether there was a response TODO make not random
 
         while self.human_feedback is None:
             sleep(0.1)
@@ -50,7 +45,6 @@ class EmailEnv(gym.Env):
 
         done = True
         info = dict()
-        # self.reset()
 
         return 0, reward, done, info
 
@@ -64,7 +58,7 @@ class EmailEnv(gym.Env):
     def render(self, mode='human'):
         if self.verbose:
             print('render')
-        # TODO print email
+        print(self.email)
 
     def close(self):
         if self.verbose:

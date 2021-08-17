@@ -20,12 +20,6 @@ function update_sequences(data) {
   } else {
     $("#email_text").text(data.email);
   }
-
-  if (data.email.startsWith('sup')) {
-    send_preference(-100);
-  } else {
-    send_preference(100);
-  }
 }
 
 function get_email() {
