@@ -8,6 +8,7 @@ from backend import web
 import threading
 
 
+# initiate environment and RL agent
 env = EmailEnv(verbose=False)
 model = A2C("MlpPolicy", env, verbose=0)
 
@@ -19,16 +20,17 @@ def main():
     threading.Thread(target=app.run, args=['0.0.0.0', 5000]).start()
 
     model.learn(total_timesteps=200)
-    rewards = list()
 
+    # evaluate for 100 emails and see total reward
+    total_reward = 0
     obs = env.reset()
     for _ in range(100):
         action, _states = model.predict(obs)
         obs, reward, done, info = env.step(action)
-        rewards.append(reward)
+        total_reward += reward
         env.render()
 
-    print(sum(rewards))
+    print(total_reward)
 
 
 if __name__ == '__main__':

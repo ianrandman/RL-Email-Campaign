@@ -1,7 +1,5 @@
 let DOMAIN = window.location.protocol + "//" + window.location.host;
 
-let sequence1;
-let sequence2;
 let last_response = Date.now();  // unix timestamp in milliseconds
 
 $(document).ready(function () {

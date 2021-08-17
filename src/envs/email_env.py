@@ -1,5 +1,3 @@
-import json
-
 import gym
 import random
 from time import sleep
@@ -8,6 +6,11 @@ from time import sleep
 greetings = {
     0: 'Hello Customer,\n\n',
     1: "sup\n\n"
+}
+
+bodies = {
+    0: 'Thank you for doing business with us. You can learn more about us at www.company.com\n\n',
+    1: 'I am a Nigerian prince who wants to send you money. Please provide your bank details.\n\n'
 }
 
 salutations = {
@@ -22,10 +25,11 @@ class EmailEnv(gym.Env):
     def __init__(self, verbose=False):
         self.action_space = gym.spaces.MultiDiscrete((
             2,  # greeting
+            2,  # body
             2)  # salutation
         )
 
-        self.observation_space = gym.spaces.Discrete(1)  # TODO demographic, etc?
+        self.observation_space = gym.spaces.Discrete(1)  # TODO demographic, product, etc?
         self.verbose = verbose
 
         self.email = None
@@ -35,13 +39,13 @@ class EmailEnv(gym.Env):
         if self.verbose:
             print('step')
 
-        self.email = greetings[action[0]] + salutations[action[-1]]
+        self.email = greetings[action[0]] + bodies[action[1]] + salutations[action[-1]]
 
         response_reward = random.choice([0, 1])  # whether there was a response TODO make not random
 
         while self.human_feedback is None:
             sleep(0.1)
-        reward = response_reward + self.human_feedback  # TODO wait for feedback
+        reward = response_reward + self.human_feedback
 
         done = True
         info = dict()
@@ -63,9 +67,3 @@ class EmailEnv(gym.Env):
     def close(self):
         if self.verbose:
             print('close')
-
-    # def clear_jsons(self):
-    #     with open('data/email.json', 'w') as f:
-    #         json.dump(dict(), f)
-    #     with open('data/feedback.json', 'w') as f:
-    #         json.dump(dict(), f)
