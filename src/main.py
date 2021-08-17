@@ -1,17 +1,19 @@
 from stable_baselines3.common.policies import ActorCriticPolicy
 from stable_baselines3.common.vec_env import SubprocVecEnv
 from stable_baselines3 import A2C
+
+from envs.email_callback import EmailCallback
 from envs.email_env import EmailEnv
 
 # multiprocess environment
 n_cpu = 4
 
-env = EmailEnv()
+env = EmailEnv(verbose=True)
 model = A2C("MlpPolicy", env, verbose=1)
 
 
 def main():
-    model.learn(total_timesteps=60)
+    model.learn(total_timesteps=20, callback=EmailCallback())
     actions = list()
 
     obs = env.reset()
